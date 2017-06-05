@@ -110,7 +110,7 @@
           '<a href="javascript:void(0)" ng-repeat="px in prevMonthDays" class="_720kb-datepicker-calendar-day _720kb-datepicker-disabled">',
             '{{px}}',
           '</a>',
-          '<a href="javascript:void(0)" ng-repeat="item in days" ng-click="setDatepickerDay(item)" ng-class="{\'_720kb-datepicker-active\': selectedDay === item && selectedMonth === monthNumber && selectedYear === year, \'_720kb-datepicker-disabled\': !isSelectableMinDate(year + \'/\' + monthNumber + \'/\' + item ) || !isSelectableMaxDate(year + \'/\' + monthNumber + \'/\' + item) || !isSelectableDate(monthNumber, year, item) || !isSelectableDay(monthNumber, year, item),\'_720kb-datepicker-today\': item === today.getDate() && monthNumber === (today.getMonth() + 1) && year === today.getFullYear() && !selectedDay}" class="_720kb-datepicker-calendar-day">',
+          '<a href="javascript:void(0)" ng-repeat="item in days" ng-click="setDatepickerDay(item)" ng-class="{\'_720kb-datepicker-active\': selectedDay === item && selectedMonth === monthNumber && selectedYear === year, \'_720kb-datepicker-disabled\': !isSelectableMinDate(year + \'/\' + monthNumber + \'/\' + item ) || !isSelectableMaxDate(year + \'/\' + monthNumber + \'/\' + item) || !isSelectableDate(monthNumber, year, item) || !isSelectableDay(monthNumber, year, item),\'_720kb-datepicker-today\': item === today.getDate() && monthNumber === (today.getMonth() + 1) && year === today.getFullYear() && !selectedDay, \'_720kb-datepicker-disabled-date\': !isSelectableDate(monthNumber, year, item)}" class="_720kb-datepicker-calendar-day">',
             '{{item}}',
           '</a>',
           '<a href="javascript:void(0)" ng-repeat="nx in nextMonthDays" class="_720kb-datepicker-calendar-day _720kb-datepicker-disabled">',
@@ -277,7 +277,7 @@
             $scope.year = Number($scope.year) + 1;
           }
           , localDateTimestamp = function localDateTimestamp(rawDate, dateFormatDefinition) {
-            
+
             var formattingTokens = /(\[[^\[]*\])|(\\)?([Hh]mm(ss)?|MMMM|MMM|MM|M|dd?d?|yy?yy?y?|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|kk?|mm?|ss?|S{1,9}|x|X|zz?|ZZ?|.)/g
             ,formatDate,dateSplit, m, d, y, index, el, longName, shortName;
 
@@ -293,7 +293,7 @@
               if (rawDate.indexOf(shortName) !== -1) {
                 rawDate = rawDate.replace(shortName, index + 1);
                 break;
-              }              
+              }
             }
 
             dateSplit = rawDate
@@ -322,11 +322,11 @@
                 }
                 case el.indexOf('y') !== -1: {
                   y = dateSplit[index];
-                  break; 
+                  break;
                 }
                 default: {
-                  break;  
-                }                                 
+                  break;
+                }
               }
             }
 
