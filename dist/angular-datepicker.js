@@ -175,6 +175,71 @@
               $scope.hideCalendar();
             }
           }
+          , localDateTimestamp = function localDateTimestamp(rawDate, dateFormatDefinition) {
+
+            var formattingTokens = /(\[[^\[]*\])|(\\)?([Hh]mm(ss)?|MMMM|MMM|MM|M|dd?d?|yy?yy?y?|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|kk?|mm?|ss?|S{1,9}|x|X|zz?|ZZ?|.)/g
+            ,formatDate,dateSplit, m, d, y, index, el, longName, shortName;
+
+            for (index = 0; index < datetime.MONTH.length; index += 1) {
+              longName = datetime.MONTH[index];
+              shortName = datetime.SHORTMONTH[index];
+
+              if (rawDate.indexOf(longName) !== -1) {
+                rawDate = rawDate.replace(longName, index + 1);
+                break;
+              }
+
+              if (rawDate.indexOf(shortName) !== -1) {
+                rawDate = rawDate.replace(shortName, index + 1);
+                break;
+              }
+            }
+
+            dateSplit = rawDate
+              .split(/\D/)
+              .filter(function dateSplitFilter(item) {
+                return item.length > 0;
+              });
+
+            formatDate = dateFormatDefinition
+              .match(formattingTokens)
+              .filter(function fromatDateFilter(item) {
+                return item.match(/^[a-zA-Z]+$/i) !== null;
+              });
+
+            for (index = 0; index < formatDate.length; index += 1) {
+              el = formatDate[index];
+
+              switch (true) {
+                case el.indexOf('d') !== -1: {
+                  d = dateSplit[index];
+                  break;
+                }
+                case el.indexOf('M') !== -1: {
+                  m = dateSplit[index];
+                  break;
+                }
+                case el.indexOf('y') !== -1: {
+                  y = dateSplit[index];
+                  break;
+                }
+                default: {
+                  break;
+                }
+              }
+            }
+
+            return new Date(y + '/' + m + '/' + d);
+          }
+          , getDateLimit = function getDateLimit(type) {
+            var dateLimit = $scope[type === 'min' ? 'dateMinLimit' : 'dateMaxLimit'];
+
+            if (!dateLimit) {
+              return null;
+            }
+
+            return localDateTimestamp(dateLimit, dateFormat);
+          }
           , setDaysInMonth = function setDaysInMonth(month, year) {
 
             var i
@@ -252,19 +317,19 @@
           }
           , resetToMinDate = function resetToMinDate() {
 
-            $scope.month = $filter('date')(new Date($scope.dateMinLimit), 'MMMM');
-            $scope.monthNumber = Number($filter('date')(new Date($scope.dateMinLimit), 'MM'));
-            $scope.day = Number($filter('date')(new Date($scope.dateMinLimit), 'dd'));
-            $scope.year = Number($filter('date')(new Date($scope.dateMinLimit), 'yyyy'));
+            $scope.month = $filter('date')(new Date(getDateLimit('min')), 'MMMM');
+            $scope.monthNumber = Number($filter('date')(new Date(getDateLimit('min')), 'MM'));
+            $scope.day = Number($filter('date')(new Date(getDateLimit('min')), 'dd'));
+            $scope.year = Number($filter('date')(new Date(getDateLimit('min')), 'yyyy'));
 
             setDaysInMonth($scope.monthNumber, $scope.year);
           }
           , resetToMaxDate = function resetToMaxDate() {
 
-            $scope.month = $filter('date')(new Date($scope.dateMaxLimit), 'MMMM');
-            $scope.monthNumber = Number($filter('date')(new Date($scope.dateMaxLimit), 'MM'));
-            $scope.day = Number($filter('date')(new Date($scope.dateMaxLimit), 'dd'));
-            $scope.year = Number($filter('date')(new Date($scope.dateMaxLimit), 'yyyy'));
+            $scope.month = $filter('date')(new Date(getDateLimit('max')), 'MMMM');
+            $scope.monthNumber = Number($filter('date')(new Date(getDateLimit('max')), 'MM'));
+            $scope.day = Number($filter('date')(new Date(getDateLimit('max')), 'dd'));
+            $scope.year = Number($filter('date')(new Date(getDateLimit('max')), 'yyyy'));
 
             setDaysInMonth($scope.monthNumber, $scope.year);
           }
@@ -275,62 +340,6 @@
           , nextYear = function nextYear() {
 
             $scope.year = Number($scope.year) + 1;
-          }
-          , localDateTimestamp = function localDateTimestamp(rawDate, dateFormatDefinition) {
-
-            var formattingTokens = /(\[[^\[]*\])|(\\)?([Hh]mm(ss)?|MMMM|MMM|MM|M|dd?d?|yy?yy?y?|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|kk?|mm?|ss?|S{1,9}|x|X|zz?|ZZ?|.)/g
-            ,formatDate,dateSplit, m, d, y, index, el, longName, shortName;
-
-            for (index = 0; index < datetime.MONTH.length; index += 1) {
-              longName = datetime.MONTH[index];
-              shortName = datetime.SHORTMONTH[index];
-
-              if (rawDate.indexOf(longName) !== -1) {
-                rawDate = rawDate.replace(longName, index + 1);
-                break;
-              }
-
-              if (rawDate.indexOf(shortName) !== -1) {
-                rawDate = rawDate.replace(shortName, index + 1);
-                break;
-              }
-            }
-
-            dateSplit = rawDate
-              .split(/\D/)
-              .filter(function dateSplitFilter(item) {
-                return item.length > 0;
-              });
-
-            formatDate = dateFormatDefinition
-              .match(formattingTokens)
-              .filter(function fromatDateFilter(item) {
-                return item.match(/^[a-zA-Z]+$/i) !== null;
-              });
-
-            for (index = 0; index < formatDate.length; index += 1) {
-              el = formatDate[index];
-
-              switch (true) {
-                case el.indexOf('d') !== -1: {
-                  d = dateSplit[index];
-                  break;
-                }
-                case el.indexOf('M') !== -1: {
-                  m = dateSplit[index];
-                  break;
-                }
-                case el.indexOf('y') !== -1: {
-                  y = dateSplit[index];
-                  break;
-                }
-                default: {
-                  break;
-                }
-              }
-            }
-
-            return new Date(y + '/' + m + '/' + d);
           }
           , setInputValue = function setInputValue() {
 
@@ -504,7 +513,7 @@
           }
 
           //check if max date is ok
-          if ($scope.dateMaxLimit) {
+          if (getDateLimit('max')) {
 
             if (!$scope.isSelectableMaxDate($scope.year + '/' + $scope.monthNumber + '/' + $scope.days[0])) {
 
@@ -534,7 +543,7 @@
             monthNumber -= 1;
           }
 
-          if ($scope.dateMinLimit) {
+          if (getDateLimit('min')) {
             if (!$scope.isSelectableMinDate(year + '/' + monthNumber + '/' + prevDay)) {
 
               return false;
@@ -557,7 +566,7 @@
             monthNumber += 1;
           }
 
-          if ($scope.dateMaxLimit) {
+          if (getDateLimit('max')) {
             if (!$scope.isSelectableMaxDate(year + '/' + monthNumber + '/01')) {
 
               return false;
@@ -579,7 +588,7 @@
             $scope.monthNumber -= 1;
           }
           //check if min date is ok
-          if ($scope.dateMinLimit) {
+          if (getDateLimit('min')) {
 
             if (!$scope.isSelectableMinDate($scope.year + '/' + $scope.monthNumber + '/' + $scope.days[$scope.days.length - 1])) {
 
@@ -608,14 +617,14 @@
             $scope.day = undefined;
           }
 
-          if ($scope.dateMaxLimit &&
+          if (getDateLimit('max') &&
             $scope.year < Number(year)) {
 
             if (!$scope.isSelectableMaxYear(year)) {
 
               return;
             }
-          } else if ($scope.dateMinLimit &&
+          } else if (getDateLimit('min') &&
             $scope.year > Number(year)) {
 
             if (!$scope.isSelectableMinYear(year)) {
@@ -674,10 +683,10 @@
 
             daysToPrepend = 50;
             daysToAppend = 50;
-            if ( $scope.dateMinLimit && $scope.dateMaxLimit) {
+            if ( getDateLimit('min') && getDateLimit('max')) {
 
-              startingYear = new Date($scope.dateMaxLimit).getFullYear();
-              daysToPrepend = startingYear - new Date($scope.dateMinLimit).getFullYear();
+              startingYear = new Date(getDateLimit('max')).getFullYear();
+              daysToPrepend = startingYear - new Date(getDateLimit('min')).getFullYear();
               daysToAppend = 1;
             }
           }
@@ -735,7 +744,7 @@
             });
           }
           //check range dates
-          if ($scope.dateMaxLimit &&
+          if (getDateLimit('max') &&
             theNewYears &&
             theNewYears.length &&
             !$scope.isSelectableMaxYear(Number(theNewYears[theNewYears.length - 1]) + 1)) {
@@ -746,7 +755,7 @@
             $scope.paginationYearsNextDisabled = false;
           }
 
-          if ($scope.dateMinLimit &&
+          if (getDateLimit('min') &&
             theNewYears &&
             theNewYears.length &&
             !$scope.isSelectableMinYear(Number(theNewYears[0]) - 1)) {
@@ -793,9 +802,9 @@
 
         $scope.isSelectableMinDate = function isSelectableMinDate(aDate) {
           //if current date
-          if (!!$scope.dateMinLimit &&
-             !!new Date($scope.dateMinLimit) &&
-             new Date(aDate).getTime() < new Date($scope.dateMinLimit).getTime()) {
+          if (!!getDateLimit('min') &&
+             !!new Date(getDateLimit('min')) &&
+             new Date(aDate).getTime() < new Date(getDateLimit('min')).getTime()) {
 
             return false;
           }
@@ -805,9 +814,9 @@
 
         $scope.isSelectableMaxDate = function isSelectableMaxDate(aDate) {
           //if current date
-          if (!!$scope.dateMaxLimit &&
-             !!new Date($scope.dateMaxLimit) &&
-             new Date(aDate).getTime() > new Date($scope.dateMaxLimit).getTime()) {
+          if (!!getDateLimit('max') &&
+             !!new Date(getDateLimit('max')) &&
+             new Date(aDate).getTime() > new Date(getDateLimit('max')).getTime()) {
 
             return false;
           }
@@ -816,8 +825,8 @@
         };
 
         $scope.isSelectableMaxYear = function isSelectableMaxYear(year) {
-          if (!!$scope.dateMaxLimit &&
-            year > new Date($scope.dateMaxLimit).getFullYear()) {
+          if (!!getDateLimit('max') &&
+            year > new Date(getDateLimit('max')).getFullYear()) {
 
             return false;
           }
@@ -826,8 +835,8 @@
         };
 
         $scope.isSelectableMinYear = function isSelectableMinYear(year) {
-          if (!!$scope.dateMinLimit &&
-            year < new Date($scope.dateMinLimit).getFullYear()) {
+          if (!!getDateLimit('min') &&
+            year < new Date(getDateLimit('min')).getFullYear()) {
 
             return false;
           }
@@ -856,9 +865,9 @@
         $scope.day = Number($filter('date')(date, 'dd')); //01-31 like
         $scope.dateWeekStartDay = $scope.validateWeekDay($scope.dateWeekStartDay);
 
-        if ($scope.dateMaxLimit) {
+        if (getDateLimit('max')) {
 
-          $scope.year = Number($filter('date')(new Date($scope.dateMaxLimit), 'yyyy'));//2014 like
+          $scope.year = Number($filter('date')(new Date(getDateLimit('max')), 'yyyy'));//2014 like
         } else {
 
           $scope.year = Number($filter('date')(date, 'yyyy'));//2014 like
@@ -946,14 +955,14 @@
         angular.element($window).on('click focus focusin', onClickOnWindow);
 
         //check always if given range of dates is ok
-        if ($scope.dateMinLimit &&
+        if (getDateLimit('min') &&
           !$scope.isSelectableMinYear($scope.year) ||
           !$scope.isSelectableMinDate($scope.year + '/' + $scope.monthNumber + '/' + $scope.day)) {
 
           resetToMinDate();
         }
 
-        if ($scope.dateMaxLimit &&
+        if (getDateLimit('max') &&
           !$scope.isSelectableMaxYear($scope.year) ||
           !$scope.isSelectableMaxDate($scope.year + '/' + $scope.monthNumber + '/' + $scope.day)) {
 
