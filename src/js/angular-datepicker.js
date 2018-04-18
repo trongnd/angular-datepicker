@@ -429,11 +429,17 @@
 
             $scope.today = new Date();
 
-            if (!$scope.isSelectableMinDate($scope.today)) {
+            var activeDate = $scope.today;
+
+            if ($scope.selectedDay) {
+              activeDate = $scope.selectedYear + '/' + $scope.selectedMonth + '/' + $scope.selectedDay;
+            }
+
+            if (!$scope.isSelectableMinDate(activeDate)) {
               resetToMinDate();
               return;
             }
-            if (!$scope.isSelectableMaxDate($scope.today)) {
+            if (!$scope.isSelectableMaxDate(activeDate)) {
               resetToMaxDate();
               return;
             }
