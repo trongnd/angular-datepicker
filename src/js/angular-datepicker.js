@@ -426,7 +426,18 @@
 
               classHelper.add(theCalendar, '_720kb-datepicker-open');
             }
+
             $scope.today = new Date();
+
+            if (!$scope.isSelectableMinDate($scope.today)) {
+              resetToMinDate();
+              return;
+            }
+            if (!$scope.isSelectableMaxDate($scope.today)) {
+              resetToMaxDate();
+              return;
+            }
+
             $timeout(function timeoutForYears() {
               if ($scope.selectedDay) {
                 $scope.year = $scope.selectedYear;

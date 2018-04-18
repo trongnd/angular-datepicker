@@ -34,7 +34,7 @@
       'connect': connect,
       'watch': watch,
       'concurrent': concurrent,
-	  'copy': copy
+	    'copy': copy
     });
 
     grunt.registerTask('default', [
@@ -50,7 +50,7 @@
 
     grunt.registerTask('prod', [
       'lint',
-	  'copy:non-minified',
+  	  'copy:non-minified',
       'cssmin',
       'uglify'
     ]);
