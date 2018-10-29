@@ -110,7 +110,17 @@
           '<a href="javascript:void(0)" ng-repeat="px in prevMonthDays" class="_720kb-datepicker-calendar-day _720kb-datepicker-disabled">',
             '{{px}}',
           '</a>',
-          '<a href="javascript:void(0)" ng-repeat="item in days" ng-click="setDatepickerDay(item)" ng-class="{\'_720kb-datepicker-active\': selectedDay === item && selectedMonth === monthNumber && selectedYear === year, \'_720kb-datepicker-disabled\': !isSelectableMinDate(year + \'/\' + monthNumber + \'/\' + item ) || !isSelectableMaxDate(year + \'/\' + monthNumber + \'/\' + item) || !isSelectableDate(monthNumber, year, item) || !isSelectableDay(monthNumber, year, item),\'_720kb-datepicker-today\': item === today.getDate() && monthNumber === (today.getMonth() + 1) && year === today.getFullYear() && !selectedDay, \'_720kb-datepicker-disabled-date\': !isSelectableDate(monthNumber, year, item)}" class="_720kb-datepicker-calendar-day">',
+          '<a href="javascript:void(0)" ng-repeat="item in days" ng-click="setDatepickerDay(item)" ng-class="{',
+            '\'_720kb-datepicker-active\': selectedDay === item && selectedMonth === monthNumber && selectedYear === year,',
+            '\'_720kb-datepicker-disabled\': !isSelectableMinDate(year + \'/\' + monthNumber + \'/\' + item ) ||',
+              '!isSelectableMaxDate(year + \'/\' + monthNumber + \'/\' + item) ||',
+              '!isSelectableDate(monthNumber, year, item) ||',
+              '!isSelectableDay(monthNumber, year, item),',
+            '\'_720kb-datepicker-today\': item === today.getDate() && monthNumber === (today.getMonth() + 1) && year === today.getFullYear() && !selectedDay,',
+            '\'_720kb-datepicker-disabled-date\': !isSelectableDate(monthNumber, year, item),',
+            '\'_720kb-datepicker-disabled-start-date\': isDisabledStartDate(monthNumber, year, item),',
+            '\'_720kb-datepicker-disabled-end-date\': isDisabledEndDate(monthNumber, year, item)',
+          '}" class="_720kb-datepicker-calendar-day">',
             '{{item}}',
           '</a>',
           '<a href="javascript:void(0)" ng-repeat="nx in nextMonthDays" class="_720kb-datepicker-calendar-day _720kb-datepicker-disabled">',
@@ -790,7 +800,7 @@
           var i = 0;
 
           if (dateDisabledWeekdays && dateDisabledWeekdays.length > 0) {
-            for (i; i <= dateDisabledWeekdays.length; i += 1) {
+            for (i; i < dateDisabledWeekdays.length; i += 1) {
               if (dateDisabledWeekdays[i] === new Date(monthNumber + '/' + day + '/' + year).getDay()) {
                 return false;
               }
@@ -801,20 +811,63 @@
         };
 
         $scope.isSelectableDate = function isSelectableDate(monthNumber, year, day) {
-          var i = 0;
+          var i = 0,
+              item;
 
-          if (dateDisabledDates &&
-            dateDisabledDates.length > 0) {
+          if (dateDisabledDates && dateDisabledDates.length > 0) {
+            for (i; i < dateDisabledDates.length; i += 1) {
+              item = dateDisabledDates[i];
 
-            for (i; i <= dateDisabledDates.length; i += 1) {
+              if (item.start || item.end) {
+                continue;
+              }
 
-              if (new Date(dateDisabledDates[i]).getTime() === new Date(monthNumber + '/' + day + '/' + year).getTime()) {
-
+              if (new Date(item.date).getTime() === new Date(monthNumber + '/' + day + '/' + year).getTime()) {
                 return false;
               }
             }
           }
           return true;
+        };
+
+        $scope.isDisabledStartDate = function isDisabledStartDate(monthNumber, year, day) {
+          var i = 0,
+              item;
+
+          if (dateDisabledDates && dateDisabledDates.length > 0) {
+            for (i; i < dateDisabledDates.length; i += 1) {
+              item = dateDisabledDates[i];
+
+              if (!item.start) {
+                continue;
+              }
+
+              if (new Date(dateDisabledDates[i].date).getTime() === new Date(monthNumber + '/' + day + '/' + year).getTime()) {
+                return true;
+              }
+            }
+          }
+          return false;
+        };
+
+        $scope.isDisabledEndDate = function isDisabledEndDate(monthNumber, year, day) {
+          var i = 0,
+              item;
+
+          if (dateDisabledDates && dateDisabledDates.length > 0) {
+            for (i; i < dateDisabledDates.length; i += 1) {
+              item = dateDisabledDates[i];
+
+              if (!item.end) {
+                continue;
+              }
+
+              if (new Date(dateDisabledDates[i].date).getTime() === new Date(monthNumber + '/' + day + '/' + year).getTime()) {
+                return true;
+              }
+            }
+          }
+          return false;
         };
 
         $scope.isSelectableMinDate = function isSelectableMinDate(aDate) {
