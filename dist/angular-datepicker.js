@@ -121,7 +121,7 @@
             '\'_720kb-datepicker-disabled-start-date\': isDisabledStartDate(monthNumber, year, item),',
             '\'_720kb-datepicker-disabled-end-date\': isDisabledEndDate(monthNumber, year, item)',
           '}" class="_720kb-datepicker-calendar-day">',
-            '{{item}}',
+            '&nbsp;{{item}}&nbsp;',
           '</a>',
           '<a href="javascript:void(0)" ng-repeat="nx in nextMonthDays" class="_720kb-datepicker-calendar-day _720kb-datepicker-disabled">',
             '{{nx}}',
