@@ -207,3 +207,24 @@ datepicker, .datepicker, [datepicker],
   background: rgba(25,2,0,0.02);
   cursor: default;
 }
+._720kb-datepicker-calendar {
+  padding-bottom: 0;
+}
+._720kb-datepicker-calendar-bottom {
+  box-sizing: border-box;
+  display: block;
+  float: left;
+  width:100%;
+  padding: 1px;
+}
+._720kb-datepicker-calendar-clear-button {
+  width: 100%;
+  padding: 7px 10px;
+  text-align: center;
+  transition: 0.25s;
+  background-color: #fafafa;
+  cursor: pointer;
+}
+._720kb-datepicker-calendar-clear-button:hover {
+  opacity: 0.5;
+}

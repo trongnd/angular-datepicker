@@ -129,6 +129,15 @@
         '</div>'
       ];
     }
+    , generateBottom = function generateBottom() {
+      return [
+        '<div class="_720kb-datepicker-calendar-bottom" ng-if="selectedDay">',
+          '<div class="_720kb-datepicker-calendar-clear-button" ng-click="clearDatepickerDay()">',
+            'Clear',
+          '</div>',
+        '</div>'
+      ].join('');
+    }
     , generateHtmlTemplate = function generateHtmlTemplate(prevButton, nextButton, preventMobile) {
 
       var toReturn = [
@@ -148,6 +157,8 @@
       yearsPaginationHeader.forEach(iterator);
       daysColumns.forEach(iterator);
       days.forEach(iterator);
+
+      iterator(generateBottom());
 
       return toReturn.join('');
     }
@@ -186,7 +197,6 @@
             }
           }
           , localDateTimestamp = function localDateTimestamp(rawDate, dateFormatDefinition) {
-
             var formattingTokens = /(\[[^\[]*\])|(\\)?([Hh]mm(ss)?|MMMM|MMM|MM|M|dd?d?|yy?yy?y?|gg(ggg?)?|GG(GGG?)?|e|E|a|A|hh?|HH?|kk?|mm?|ss?|S{1,9}|x|X|zz?|ZZ?|.)/g
             ,formatDate,dateSplit, m, d, y, index, el, longName, shortName;
 
@@ -211,8 +221,7 @@
                 return item.length > 0;
               });
 
-            formatDate = dateFormatDefinition
-              .match(formattingTokens)
+            formatDate = ((dateFormatDefinition || '').match(formattingTokens) || [])
               .filter(function fromatDateFilter(item) {
                 return item.match(/^[a-zA-Z]+$/i) !== null;
               });
@@ -697,6 +706,19 @@
 
             $scope.hideCalendar();
           }
+        };
+
+        $scope.clearDatepickerDay = function clearDatepickerDay() {
+          thisInput.val('');
+
+          if (attr.hasOwnProperty('dateRefocus')) {
+            thisInput[0].focus();
+          }
+
+          $scope.hideCalendar();
+
+          thisInput.triggerHandler('input');
+          thisInput.triggerHandler('change');
         };
 
         $scope.paginateYears = function paginateYears(startingYear) {
