@@ -221,7 +221,7 @@ datepicker, .datepicker, [datepicker],
   width: 100%;
   padding: 7px 10px;
   text-align: center;
-  transition: 0.25s;
+  transition: opacity 0.25s;
   background-color: #fafafa;
   cursor: pointer;
 }
